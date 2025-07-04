@@ -1,5 +1,6 @@
-// frontend/src/App.js
+// src/App.js
 import { useState } from "react";
+import styles from "./App.module.css";  // CSS Module import
 
 function App() {
   const [text, setText] = useState("");
@@ -10,27 +11,33 @@ function App() {
     const res = await fetch("/api/extract", {
       method: "POST",
       headers: { "Content-Type": "text/plain" },
-      body: text,
+      body: text.trim(),
     });
-    const data = await res.json();
-    setUser(data);
+    setUser(await res.json());
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className={styles.container}>
+      <h1 className={styles.header}>Vending Machine NLP</h1>
+
+      <form onSubmit={handleSubmit} className={styles.form}>
         <textarea
+          className={styles.textarea}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Alice is 29 years old"
         />
-        <button type="submit">Extract</button>
+        <button type="submit" className={styles.button}>
+          Extract
+        </button>
       </form>
 
       {user && (
-        <div>
-          <h2>Parsed result</h2>
-          <pre>{JSON.stringify(user, null, 2)}</pre>
+        <div className={styles.resultCard}>
+          <div className={styles.resultHeader}>Parsed Result</div>
+          <pre className={styles.pre}>
+            {JSON.stringify(user, null, 2)}
+          </pre>
         </div>
       )}
     </div>
