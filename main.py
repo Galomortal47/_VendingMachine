@@ -95,7 +95,7 @@ async def extract_raw(text: str = Body(..., media_type="text/plain")):
         model="gpt-4o-mini",
         messages=[
             {"role": "system",
-             "content": "Answer with exactly one word: soda, orangejuice, or water."},
+             "content": "Answer with exactly one word: soda, orangejuice, water or none."},
             {"role": "user", "content": text},
         ],
     )
