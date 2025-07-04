@@ -91,14 +91,7 @@ async def extract_raw(text: str = Body(..., media_type="text/plain")):
     3) Deduct cost, log everything, return a one-word response.
     """
     # 1) Determine desired product via LLM
-    response = openai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system",
-             "content": "Answer with exactly one word: soda, orangejuice, water or none."},
-            {"role": "user", "content": text},
-        ],
-    )
+    response = inference("Answer with exactly one word: soda, orangejuice, water or none.",text) 
     product = response.choices[0].message.content.strip().lower()
     if product not in {"soda", "orangejuice", "water"}:
         raise HTTPException(400, f"Invalid product: {product}")
@@ -121,7 +114,8 @@ async def extract_raw(text: str = Body(..., media_type="text/plain")):
         await database.execute(logs_table.insert().values(
             message=f"Rejected {product}: balance {balance} < cost {cost}"
         ))
-        return {"status": "insufficient_funds"}
+        response = inference("Inform the user the result of the transaction: insufficient_funds",text) 
+        return {"reply":response.choices[0].message.content}
 
     # 3) Deduct & log
     new_balance = balance - cost
@@ -138,5 +132,16 @@ async def extract_raw(text: str = Body(..., media_type="text/plain")):
     await database.execute(logs_table.insert().values(
         message=f"Response: {reply}"
     ))
+    
+    response = inference("Inform the user the result of the transaction: "+reply,text) 
+    return {"reply":response.choices[0].message.content}
 
-    return {"status": "success", "product": reply}
+def inference(content,text):
+    response = openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system","content": content },
+            {"role": "user",  "content": text},
+        ],
+    )
+    return response
