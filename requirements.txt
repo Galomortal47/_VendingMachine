@@ -1,0 +1,9 @@
+fastapi==0.113.0
+uvicorn[standard]==0.22.0
+sqlalchemy==1.4.52
+databases[sqlite]==0.6.1
+aiosqlite==0.19.0
+instructor==1.9.0
+pydantic==2.11.7
+openai==1.93.0
+jsonref==1.1.0    

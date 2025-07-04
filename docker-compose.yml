@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    # mount your code so edits show up instantly
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=development
+    # no version: field needed in Compose v2
+    # no command override needed—Dockerfile CMD already runs uvicorn
