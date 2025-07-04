@@ -1,15 +1,21 @@
+version: "3.8"
+
 services:
-  web:
+  api:
     build: .
-    # mount your code so edits show up instantly
-    env_file:
-      - .env
-    volumes:
-      - .:/app
-      - /app/__pycache__
+    container_name: vendingmachine-api
     ports:
       - "8000:8000"
     environment:
-      - ENV=development
-    # no version: field needed in Compose v2
-    # no command override needed—Dockerfile CMD already runs uvicorn
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vendingmachine-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
